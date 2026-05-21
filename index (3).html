@@ -17,65 +17,14 @@
 
     body {
       width: 100%;
+      background-color: #afc2df;
       min-height: 100vh;
       overflow-x: hidden;
       /* Body text font: Yu Gothic UI */
       font-family: 'Yu Gothic UI', 'Segoe UI', 'Inter', system-ui, sans-serif;
     }
 
-    /* ========== HORIZONTAL LINEAR GRADIENT BACKGROUND ========== */
-    .gradient-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      background: linear-gradient(90deg, #ffffff 0%, #2b5fe0 100%);
-    }
-
-    /* ========== MAIN CONTENT ========== */
-    .main-content {
-      position: relative;
-      z-index: 10;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
-
-    /* Logo container – zero border radius, background fits content */
-    .logo-wrapper {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      background: transparent;
-      padding: 0.5rem 1rem;
-      border-radius: 0;        /* zero border radius */
-      backdrop-filter: none;
-    }
-
-    /* SVG logo */
-    .custom-logo {
-      width: 110px;
-      height: 110px;
-      display: block;
-    }
-
-    /* Logo text font: Crowk (with fallbacks) – now uppercase */
-    .logo-text {
-      font-family: 'Crowk', 'Playfair Display', 'Georgia', serif;
-      font-size: 2.4rem;
-      font-weight: 600;
-      letter-spacing: 2px;
-      color: #1a2a4f;
-      text-shadow: 0 1px 2px rgba(255,255,255,0.3);
-      text-transform: uppercase;
-    }
-
+ 
     /* ========== POETIC CONTENT (body text = Yu Gothic UI) ========== */
     .poetry-container {
       position: relative;
@@ -91,20 +40,20 @@
 
     .poetry-container p, .poetry-container .desc {
       font-family: 'Yu Gothic UI', 'Segoe UI', sans-serif;
-      color: #f0f0f0;
+      color: #2b2a6a;
       line-height: 1.5;
     }
 
     .main-quote {
       font-size: 1.8rem;
       font-weight: 500;
-      color: #fff5ea;
+      color: #2b2a6a;
       margin-bottom: 1.2rem;
     }
 
     .poetic-lines {
       font-size: 1.2rem;
-      color: #e0cfc2;
+      color: #2b2a6a;
       border-left: 3px solid #ffaa88;
       padding-left: 1rem;
       margin: 1rem 0;
@@ -114,20 +63,20 @@
     .highlight-heading {
       font-size: 1.6rem;
       font-weight: 600;
-      color: #ffeedd;
+      color: #2b2a6a;
       margin: 1rem 0;
     }
 
     .description {
       font-size: 1rem;
-      color: #e0d6cf;
+      color: #2b2a6a;
       margin: 1rem 0;
     }
 
     .atmosphere {
       font-size: 1.1rem;
       font-style: italic;
-      color: #f0e0d0;
+      color: #2b2a6a;
       border-top: 1px solid rgba(255,170,136,0.3);
       padding-top: 1rem;
       margin-top: 1rem;
@@ -136,7 +85,7 @@
     /* ========== STICKY CENTER NAVBAR (menu font: Kugile) ========== */
     .center-nav {
       position: fixed;
-      top: 70%;
+      top: 65%;
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 200;
@@ -148,7 +97,7 @@
       padding: 0.8rem 2rem;
       white-space: nowrap;
       background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(0.1px);
       border-radius: 80px;
       border: 1px solid rgba(255,255,255,0.2);
     }
@@ -266,16 +215,8 @@
 </head>
 <body>
 
-<!-- Horizontal linear gradient background (white to blue) -->
-<div class="gradient-bg"></div>
-
 <div class="main-content">
-  <!-- Logo + text (zero border radius) -->
-  <div class="logo-wrapper">
-    <!-- Custom SVG: two vertical C's facing each other, thickness increasing from center to ends, 
-         with two A's inside: one normal (cursive), one INVERTED (rotated 180°) -->
-    <svg class="custom-logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <defs>
+
         <style>
           .c-left {
             fill: none;
@@ -302,23 +243,6 @@
           }
         </style>
       </defs>
-      
-      <!-- LEFT C (vertical, opening right) – thickness increases toward ends -->
-      <path class="c-left" d="M 48 15 Q 18 15, 18 42 Q 18 78, 48 105" stroke-width="3" />
-      <path class="c-left" d="M 48 18 Q 22 18, 22 42 Q 22 78, 48 102" stroke-width="5" opacity="0.5" />
-      <path class="c-left" d="M 48 12 Q 14 12, 14 42 Q 14 78, 48 108" stroke-width="7" opacity="0.25" />
-      
-      <!-- RIGHT C (mirrored, opening left) -->
-      <path class="c-right" d="M 72 15 Q 102 15, 102 42 Q 102 78, 72 105" stroke-width="3" />
-      <path class="c-right" d="M 72 18 Q 98 18, 98 42 Q 98 78, 72 102" stroke-width="5" opacity="0.5" />
-      <path class="c-right" d="M 72 12 Q 106 12, 106 42 Q 106 78, 72 108" stroke-width="7" opacity="0.25" />
-      
-      <!-- Two A's inside: normal (cursive) & INVERTED (rotated 180°) -->
-      <text x="60" y="52" text-anchor="middle" class="a-cursive" dy=".3em">A</text>
-      <text x="60" y="80" text-anchor="middle" class="a-inverted" dy=".3em" transform="rotate(180 60 66)">A</text>
-    </svg>
-    <!-- Logo text: ANAEMOIA (all caps) using Crowk font -->
-    <span class="logo-text">ANAEMOIA</span>
   </div>
 </div>
 
@@ -343,11 +267,8 @@
 
 <!-- CENTER NAVBAR (menu font: Kugile) -->
 <div class="center-nav">
-  <a href="a.html">Anaemoia™</a>
-  <a href="archive.html">Word collection</a>
-  <a href="info-contact.html" class="active"><u>Brand Store</u></a>
-  <a href="#">IG</a>
-  <a href="#">YT</a>
+  <a href="a.html">Anemoia™</a>
+  <a href="index (2).html">Collection</a>
   <a href="mailto:contactBrand_store.com">contact@Brand_Store.com</a>
 </div>
 
