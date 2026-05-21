@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Anaemoia™</title>
+  <!-- Anaemoia cursive favicon with large 'A' -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%232b2a6a'/%3E%3Ctext x='50' y='72' font-family='%27Alex Brush%27, cursive' font-size='62' text-anchor='middle' fill='white' font-weight='bold'%3EA%3C/text%3E%3C/svg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'Crowk';
+      src: local('Crowk'), local('Georgia');
+      font-display: swap;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: #0a0a1a;
+      transition: background-image 0.55s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Yu Gothic UI', 'Segoe UI', 'Inter', sans-serif;
+      color: #2b2a6a;
+      position: relative;
+    }
+
+    /* ========== BACKGROUND WATERMARK LOGO (Crowk font) ========== */
+    .bg-watermark {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.06;
+      font-family: 'Crowk', 'Georgia', serif;
+      font-size: clamp(8rem, 20vw, 22rem);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #ffffff;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transform: rotate(-8deg);
+      user-select: none;
+    }
+
+    /* ========== TOP-LEFT CORNER LOGO (Crowk font) ========== */
+    .top-left-logo {
+      position: fixed;
+      top: 24px;
+      left: 28px;
+      z-index: 1000;
+      font-family: 'Crowk', 'Georgia', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      color: #2b2a6a;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(6px);
+      padding: 6px 14px;
+      border-radius: 40px;
+      transition: 0.2s ease;
+      pointer-events: auto;
+      border: 1px solid rgba(43, 42, 106, 0.15);
+    }
+    .top-left-logo:hover {
+      background: rgba(255, 255, 255, 0.6);
+      transform: scale(1.02);
+    }
+
+    /* subtle overlay for readability */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.25);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+    }
+
+    /* RING container — rotates and scales */
+    .ring {
+      position: relative;
+      border-radius: 50%;
+      will-change: transform;
+      transition: transform 0.05s linear;
+    }
+
+    /* individual image boxes (thumbnails) */
+    .box {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      overflow: hidden;
+      border-radius: 4px;
+      background: #111;
+      transform-origin: center;
+      transition: transform 0.2s ease, opacity 0.3s ease, box-shadow 0.25s ease;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(0.35) contrast(1.05);
+      transition: filter 0.3s ease, transform 0.3s ease;
+    }
+
+    /* active (top-most box) */
+    .active {
+      z-index: 10;
+      transform: scale(1.38);
+      box-shadow: 0 0 20px rgba(255, 245, 200, 0.7), 0 5px 18px rgba(0, 0, 0, 0.25);
+    }
+
+    .active img {
+      filter: grayscale(0%) brightness(1.05);
+      transform: scale(1.08);
+    }
+
+    /* ========== FIXED NAVBAR (STICKY, DOES NOT MOVE) ========== */
+    .center-wrapper {
+      position: fixed;
+      z-index: 100;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: auto;
+      width: auto;
+      white-space: nowrap;
+    }
+
+    .center-text {
+      display: flex;
+      gap: 2.2rem;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: nowrap;
+      color: #2b2a6a;
+      font-family: 'Yu Gothic UI', 'Segoe UI', 'Inter', sans-serif;
+      font-size: clamp(12px, 1.4vw, 16px);
+      font-weight: 600;
+      mix-blend-mode: difference;
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(8px);
+      padding: 8px 18px;
+      border-radius: 60px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .center-text a {
+      color: #2b2a6a;
+      text-decoration: none;
+      transition: 0.25s ease;
+      letter-spacing: 0.3px;
+    }
+
+    .center-text a:hover {
+      opacity: 0.7;
+      text-shadow: 0 0 2px white;
+    }
+
+    /* dropdown (hover) */
+    .voku-area {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .dropdown-link {
+      position: absolute;
+      padding: 4px 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s ease;
+      white-space: nowrap;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(4px);
+      border-radius: 24px;
+    }
+
+    .dropdown-link a {
+      color: #2b2a6a;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .top-dropdown {
+      bottom: 32px;
+      transform: translateY(8px);
+    }
+
+    .bottom-dropdown {
+      top: 32px;
+      transform: translateY(-8px);
+    }
+
+    .voku-area:hover .dropdown-link {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    /* FOOTER – cookie consent */
+    .footer {
+      position: fixed;
+      bottom: 22px;
+      right: 24px;
+      width: auto;
+      max-width: 380px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      text-align: right;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      border-radius: 24px;
+      padding: 12px 18px;
+      transition: 0.2s;
+      font-family: 'Yu Gothic UI', 'Segoe UI', sans-serif;
+    }
+
+    .cookie-text {
+      color: #f5f5f5;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.45;
+      max-width: 320px;
+      word-break: break-word;
+    }
+
+    .cookie-text a {
+      color: #fff;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    .footer-buttons {
+      display: flex;
+      gap: 18px;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    .footer-buttons button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 4px 12px;
+      border-radius: 30px;
+      transition: 0.2s;
+      font-family: 'Yu Gothic UI', sans-serif;
+    }
+
+    .footer-buttons button:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .footer-buttons button:last-child {
+      background: white;
+      color: #111;
+      font-weight: 600;
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      .footer {
+        bottom: 16px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        align-items: center;
+        text-align: center;
+        max-width: 88vw;
+      }
+      .cookie-text {
+        max-width: 260px;
+        font-size: 10px;
+      }
+      .footer-buttons {
+        justify-content: center;
+        gap: 12px;
+      }
+      .center-text {
+        gap: 1.2rem;
+        padding: 5px 12px;
+        font-size: 10px;
+      }
+      .dropdown-link a {
+        font-size: 9px;
+      }
+      .top-dropdown {
+        bottom: 26px;
+      }
+      .bottom-dropdown {
+        top: 26px;
+      }
+      .top-left-logo {
+        top: 16px;
+        left: 16px;
+        font-size: 1rem;
+        padding: 4px 10px;
+      }
+      .bg-watermark {
+        font-size: 6rem;
+        white-space: normal;
+        text-align: center;
+        width: 100%;
+        transform: rotate(-5deg);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- BACKGROUND WATERMARK LOGO (Crowk, #2b2a6a) -->
+<div class="bg-watermark">ANEMOIA</div>
+
+<!-- TOP-LEFT CORNER LOGO (Crowk, #2b2a6a) -->
+<a href="index (1).html" class="top-left-logo">Anaemoia™</a>
+
+<div class="scene">
+  <div class="ring" id="ring"></div>
+</div>
+
+<!-- FIXED NAVBAR (Yu Gothic UI, #2b2a6a) -->
+<div class="center-wrapper">
+  <div class="center-text">
+    <div class="voku-area">
+      <div class="dropdown-link top-dropdown"><a href="index .html">Word Collection</a></div>
+      <a href="index.html">Anaemoia™</a>
+      <div class="dropdown-link bottom-dropdown"><a href="info-contact.html">Brand Store</a></div>
+    </div>
+    <a href="index (2).html">Word Collection</a>
+    <a href="index (3).html">Brand Store</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="cookie-text">
+    This website uses its own and third-party cookies necessary for its operation
+    and to analyze your browsing habits. Also, some cookies are related to
+    functionalities offered on the web. For more information, please access our
+    <a href="#">cookies policy</a>
+  </div>
+  <div class="footer-buttons">
+    <button>Settings</button>
+    <button>Cancel</button>
+    <button>Got it</button>
+  </div>
+</footer>
+
+<script>
+  (function() {
+    // ============================================================
+    //  C O N F I G U R A T I O N   (EDIT THESE VALUES)
+    // ============================================================
+    
+    // 1. Number of image holders (thumbnails) on the ring
+    const totalBoxes = 10;            // ← change to any number (e.g., 12, 36, 48)
+    
+    // 2. Image source settings (your local images)
+    const imageFolder = "rotate_image/";   // folder path (relative to this HTML)
+    const imageExt = ".png";               // file extension: ".png" or ".jpg"
+    const firstImageIndex = 0;             // first image number (usually 0)
+    const lastImageIndex = 10;             // last image number (inclusive)
+    
+    // 3. Ring size (diameter relative to viewport)
+    const ringRelativeSize = 0.72;          // 0.72 = 72% of min(viewport width, height)
+    
+    // 4. Thumbnail box size (responsive min/max)
+    const boxSizeMin = 75;      // minimum size in pixels (mobile)
+    const boxSizeMax = 75;      // maximum size in pixels (desktop)
+    
+    // 5. Background image fitting
+    //    "contain" = whole image visible without cropping (letterboxes possible)
+    //    "cover"   = image fills entire screen, may crop edges
+    const backgroundFit = "contain";
+    
+    // 6. Ring expansion animation duration (ms)
+    const scaleDurationMs = 1800;
+    
+    // 7. Rotation sensitivity (max degrees to rotate when mouse at edges)
+    const maxRotationDeg = 360;
+    
+    // ============================================================
+    //  DO NOT EDIT BELOW UNLESS YOU KNOW WHAT YOU'RE DOING
+    // ============================================================
+    
+    const ringEl = document.getElementById("ring");
+    
+    // Build array of image paths (e.g., rotate_image/0.png, rotate_image/1.png, ...)
+    const imagePaths = [];
+    for (let i = firstImageIndex; i <= lastImageIndex; i++) {
+      imagePaths.push(`${imageFolder}${i}${imageExt}`);
+    }
+    const uniqueImagesCount = imagePaths.length;
+    if (uniqueImagesCount === 0) {
+      console.error("No images defined! Check firstImageIndex / lastImageIndex");
+    }
+    
+    // Helper: get ring diameter and thumbnail size
+    function getRingDiameter() {
+      const minSide = Math.min(window.innerWidth, window.innerHeight);
+      return minSide * ringRelativeSize;
+    }
+    
+    function getBoxSize() {
+      const vw = window.innerWidth;
+      // dynamic clamp based on viewport width
+      const size = Math.min(boxSizeMax, Math.max(boxSizeMin, vw * 0.03));
+      return size;
+    }
+    
+    // Create boxes dynamically
+    const boxes = [];
+    const angleStep = 360 / totalBoxes;
+    
+    function positionBoxes() {
+      const radius = getRingDiameter() / 2;
+      const boxSize = getBoxSize();
+      const offset = radius; // distance from center to box center
+      
+      boxes.forEach((box, idx) => {
+        const angle = idx * angleStep;
+        // transform: rotate to angle, translate outward, rotate back so box stays upright
+        box.style.transform = `rotate(${angle}deg) translate(${offset}px) rotate(-${angle}deg)`;
+        box.style.width = `${boxSize}px`;
+        box.style.height = `${boxSize}px`;
+        box.style.marginLeft = `-${boxSize/2}px`;
+        box.style.marginTop = `-${boxSize/2}px`;
+      });
+      
+      // Update ring container size
+      const diameter = getRingDiameter();
+      ringEl.style.width = `${diameter}px`;
+      ringEl.style.height = `${diameter}px`;
+    }
+    
+    // Create DOM elements
+    for (let i = 0; i < totalBoxes; i++) {
+      const box = document.createElement("div");
+      box.className = "box";
+      const imgSrc = imagePaths[i % uniqueImagesCount];
+      box.innerHTML = `<img src="${imgSrc}" alt="celestial frame">`;
+      ringEl.appendChild(box);
+      boxes.push(box);
+    }
+    
+    // Position boxes initially and on resize
+    positionBoxes();
+    window.addEventListener("resize", () => {
+      positionBoxes();
+      // re-evaluate top image after resize
+      setTimeout(updateTopImageAndBackground, 50);
+    });
+    
+    // ------------------------------
+    // GRADUAL RING SCALING (from small to full)
+    // ------------------------------
+    let currentScale = 0.2;
+    let targetScale = 1.0;
+    let scaleAnimationId = null;
+    const scaleStartTime = performance.now();
+    
+    function updateRingTransform() {
+      ringEl.style.transform = `rotate(${currentRotation}deg) scale(${currentScale})`;
+    }
+    
+    function animateScale(now) {
+      const elapsed = now - scaleStartTime;
+      let progress = Math.min(1, elapsed / scaleDurationMs);
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      currentScale = 0.2 + (targetScale - 0.2) * easeOut;
+      updateRingTransform();
+      if (progress < 1) {
+        requestAnimationFrame(animateScale);
+      } else {
+        currentScale = targetScale;
+        updateRingTransform();
+      }
+    }
+    
+    setTimeout(() => {
+      requestAnimationFrame(animateScale);
+    }, 50);
+    
+    // ------------------------------
+    // MOUSE / TOUCH ROTATION
+    // ------------------------------
+    let currentRotation = 0;
+    let targetRotation = 0;
+    
+    function handlePointerMove(clientX, clientWidth) {
+      const x = clientX / clientWidth;
+      targetRotation = (x - 0.5) * maxRotationDeg;
+    }
+    
+    document.addEventListener("mousemove", (e) => {
+      handlePointerMove(e.clientX, window.innerWidth);
+    });
+    
+    document.addEventListener("touchmove", (e) => {
+      if (e.touches.length) {
+        handlePointerMove(e.touches[0].clientX, window.innerWidth);
+      }
+    });
+    
+    // ------------------------------
+    // BACKGROUND CHANGE (topmost image) with FULL VISIBILITY
+    // ------------------------------
+    let currentBgImage = null;
+    
+    function updateTopImageAndBackground() {
+      let topBox = null;
+      let minY = Infinity;
+      
+      for (let box of boxes) {
+        const rect = box.getBoundingClientRect();
+        if (rect.top < minY) {
+          minY = rect.top;
+          topBox = box;
+        }
+      }
+      
+      if (!topBox) return;
+      
+      // update active class
+      boxes.forEach(b => b.classList.remove("active"));
+      topBox.classList.add("active");
+      
+      const imgElement = topBox.querySelector("img");
+      if (imgElement && imgElement.src) {
+        const newBgUrl = imgElement.src;
+        if (currentBgImage !== newBgUrl) {
+          currentBgImage = newBgUrl;
+          document.body.style.backgroundImage = `url('${newBgUrl}')`;
+          document.body.style.backgroundSize = backgroundFit;
+          document.body.style.backgroundPosition = "center center";
+          document.body.style.backgroundRepeat = "no-repeat";
+          document.body.style.backgroundAttachment = "fixed";
+        }
+      }
+    }
+    
+    // ------------------------------
+    // MAIN ANIMATION LOOP
+    // ------------------------------
+    function animateRing() {
+      currentRotation += (targetRotation - currentRotation) * 0.12;
+      updateRingTransform();
+      updateTopImageAndBackground();
+      requestAnimationFrame(animateRing);
+    }
+    requestAnimationFrame(animateRing);
+    
+    // initial background
+    document.body.style.backgroundColor = "#0a0a1a";
+    document.body.style.backgroundImage = "none";
+    setTimeout(() => {
+      updateTopImageAndBackground();
+    }, 200);
+    
+    // ------------------------------
+    // COOKIE BUTTONS
+    // ------------------------------
+    const settingsBtn = document.querySelector('.footer-buttons button:first-child');
+    const cancelBtn = document.querySelector('.footer-buttons button:nth-child(2)');
+    const gotItBtn = document.querySelector('.footer-buttons button:last-child');
+    
+    if (settingsBtn) settingsBtn.addEventListener('click', () => alert('⚙️ Cookie preferences: essential & analytics.'));
+    if (cancelBtn) cancelBtn.addEventListener('click', () => alert('Preference cancelled. Non-essential cookies disabled.'));
+    if (gotItBtn) {
+      gotItBtn.addEventListener('click', () => {
+        const footer = document.querySelector('.footer');
+        footer.style.transition = 'opacity 0.3s ease, transform 0.4s ease';
+        footer.style.opacity = '0';
+        footer.style.transform = 'translateY(30px)';
+        setTimeout(() => { footer.style.display = 'none'; }, 400);
+      });
+    }
+    
+    // log broken images
+    document.querySelectorAll('.box img').forEach(img => {
+      img.addEventListener('error', () => console.warn(`Failed to load: ${img.src}`));
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Word Collection</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%232b2a6a'/%3E%3Cpath d='M25 30 L35 70 L50 45 L65 70 L75 30' stroke='white' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round' /%3E%3C/svg%3E">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap');
+
+    @font-face {
+      font-family: 'Crowk';
+      src: local('Crowk'), local('Georgia');
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Kugile';
+      src: local('Kugile'), local('Brush Script MT');
+      font-display: swap;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f0f4fa;
+      font-family: 'Yu Gothic UI', 'Segoe UI', 'Inter', system-ui, sans-serif;
+      color: #1a3c8a;
+      overflow-x: hidden;
+      padding-bottom: 180px;
+    }
+
+    /* Static glass background boxes */
+    .bg-ring {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .bg-box {
+      position: absolute;
+      width: 220px;
+      height: 300px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 18px;
+      opacity: 0.18;
+      border: 1px solid rgba(26, 60, 138, 0.08);
+      backdrop-filter: blur(3px);
+      transition: none;
+    }
+
+    .bg-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(0.08) contrast(1.02);
+    }
+
+    /* Center navigation */
+    .center-nav {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+      mix-blend-mode: difference;
+      white-space: nowrap;
+      background: transparent;
+      pointer-events: auto;
+    }
+
+    .center-nav a {
+      font-family: 'Kugile', 'Brush Script MT', cursive;
+      color: #1a3c8a;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      transition: 0.2s ease;
+      cursor: pointer;
+    }
+
+    .center-nav a:hover {
+      opacity: 0.6;
+    }
+
+    /* Project grid – each card respects image aspect ratio */
+    .projects {
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      padding: 140px 48px 80px 48px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 70px 60px;
+    }
+
+    .project {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s ease;
+    }
+
+    /* Make image container flexible, show entire image without cropping */
+    .project img {
+      width: 100%;
+      height: auto;
+      max-height: 260px;
+      object-fit: contain;
+      transition: 0.3s ease;
+      border-radius: 2px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      background: #f9f9ff;
+    }
+
+    .project img:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 24px rgba(26, 60, 138, 0.12);
+    }
+
+    .project span {
+      margin-top: 22px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a3c8a;
+      letter-spacing: 0.5px;
+    }
+
+    /* Nakshatra Hero Section */
+    .nakshatra-hero {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      padding: 80px 80px 40px 80px;
+      text-align: center;
+      background: rgba(240, 244, 250, 0.7);
+      backdrop-filter: blur(2px);
+      border-top: 1px solid rgba(26, 60, 138, 0.1);
+      border-bottom: 1px solid rgba(26, 60, 138, 0.1);
+    }
+
+    .nakshatra-heading {
+      font-family: 'Crowk', 'Georgia', serif;
+      font-size: 5rem;
+      letter-spacing: 8px;
+      background: linear-gradient(135deg, #1a3c8a, #2b6cb0, #1e4a76);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 32px;
+      text-transform: uppercase;
+    }
+
+    .nakshatra-description {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 48px;
+      text-align: left;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #1a3c8a;
+    }
+
+    .nakshatra-description .left, 
+    .nakshatra-description .right {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    /* Double logo block */
+    .double-logo {
+      position: relative;
+      z-index: 4;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+      margin: 80px 0 80px 0;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .logo-row svg {
+      width: 120px;
+      height: 120px;
+      display: block;
+      filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.05));
+    }
+
+    .logo-row .logo-caption {
+      font-family: 'Crowk', 'Playfair Display', 'Georgia', serif;
+      font-size: 2.8rem;
+      font-weight: 600;
+      letter-spacing: 4px;
+      color: #1a3c8a;
+      text-transform: uppercase;
+    }
+
+    /* Footer cookie bar */
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 999;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(12px);
+      padding: 20px 28px 22px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .cookie-text {
+      color: #f0f0f0;
+      font-size: 13px;
+      line-height: 1.45;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .cookie-text a {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    .footer-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .footer-buttons button {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 40px;
+      transition: 0.2s;
+    }
+
+    .footer-buttons button:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .footer-buttons button:last-child {
+      background: white;
+      color: black;
+      font-weight: 600;
+      padding: 6px 24px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .projects {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px 18px;
+        padding: 100px 20px 60px;
+      }
+      .project img {
+        max-height: 180px;
+      }
+      .center-nav {
+        gap: 14px;
+        flex-wrap: wrap;
+        width: 90%;
+        justify-content: center;
+        white-space: normal;
+      }
+      .center-nav a {
+        font-size: 11px;
+      }
+      .bg-box {
+        width: 140px;
+        height: 200px;
+      }
+      .nakshatra-hero {
+        padding: 50px 24px 30px;
+      }
+      .nakshatra-heading {
+        font-size: 2.8rem;
+        letter-spacing: 4px;
+      }
+      .nakshatra-description {
+        flex-direction: column;
+        gap: 24px;
+      }
+      .right {
+        text-align: left;
+      }
+      .logo-row svg {
+        width: 70px;
+        height: 70px;
+      }
+      .logo-row .logo-caption {
+        font-size: 1.8rem;
+      }
+      .footer {
+        padding: 14px 16px;
+      }
+      .footer-buttons {
+        gap: 18px;
+      }
+    }
+
+    .scroll-spacer {
+      height: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-ring" id="bgRing"></div>
+
+<div class="center-nav">
+  <a href="#">Anaemoia™</a>
+  <a href="#" id="wordCollectionLink">Word Collection</a>
+  <a href="#nakshatra-section" id="nakshatraNavLink">Nakshatra</a>
+  <a href="#" id="brandStoreLink">Brand Store</a>
+</div>
+
+<div class="projects" id="projectsGrid"></div>
+
+<!-- NAKSHATRA SECTION -->
+<section id="nakshatra-section" class="nakshatra-hero">
+  <h1 class="nakshatra-heading">NAKSHATRA</h1>
+  <div class="nakshatra-description">
+    <div class="left">
+      ✦ Inspired by the 27 nakshatras of Indian astrology, <strong>Nakshatra</strong> is the debut couture collection by Anemoia — a celestial exploration of femininity, destiny, and emotion. The collection unfolds through 27 looks, each representing the distinct essence of a nakshatra: its energy, symbolism, mood, and spiritual depth. Moving between softness and strength, stillness and transformation, every silhouette reflects a different facet of the feminine spirit. Fluid drapes, celestial embellishments, intricate craftsmanship, and sculptural forms come together to create garments that feel ethereal yet deeply rooted in heritage.
+    </div>
+    <div class="right">
+      The final look emerges as the soul of the collection: a bridal ensemble symbolizing culmination, rebirth, and eternal connection. Like the last star completing a constellation, it marks the closing chapter of Nakshatra while opening the beginning of a new journey. Each garment exists as an ode to cosmic alignment — where tradition meets avant-garde, and every stitch honors the lunar mansions that guide us.<br><br>
+      ⸻ 27 celestial silhouettes, one eternal story.
+    </div>
+  </div>
+</section>
+
+<div class="double-logo">
+  <div class="logo-row">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <defs><style>.c-left, .c-right { fill: none; stroke: #1a3c8a; stroke-linecap: round; }</style></defs>
+      <path class="c-left" d="M 48 15 Q 18 15, 18 42 Q 18 78, 48 105" stroke-width="3" />
+      <path class="c-left" d="M 48 18 Q 22 18, 22 42 Q 22 78, 48 102" stroke-width="5" opacity="0.5" />
+      <path class="c-left" d="M 48 12 Q 14 12, 14 42 Q 14 78, 48 108" stroke-width="7" opacity="0.25" />
+      <path class="c-right" d="M 72 15 Q 102 15, 102 42 Q 102 78, 72 105" stroke-width="3" />
+      <path class="c-right" d="M 72 18 Q 98 18, 98 42 Q 98 78, 72 102" stroke-width="5" opacity="0.5" />
+      <path class="c-right" d="M 72 12 Q 106 12, 106 42 Q 106 78, 72 108" stroke-width="7" opacity="0.25" />
+      <text x="60" y="52" text-anchor="middle" font-family="'Alex Brush', cursive" fill="#1a3c8a" font-size="34" font-weight="bold" dy=".3em">A</text>
+      <text x="60" y="80" text-anchor="middle" font-family="'Alex Brush', cursive" fill="#1a3c8a" font-size="34" font-weight="bold" dy=".3em" transform="rotate(180 60 66)">A</text>
+    </svg>
+    <span class="logo-caption">ANAEMOIA</span>
+  </div>
+  <div class="logo-row">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <path class="c-left" d="M 48 15 Q 18 15, 18 42 Q 18 78, 48 105" stroke="#1a3c8a" fill="none" stroke-width="3" stroke-linecap="round"/>
+      <path class="c-left" d="M 48 18 Q 22 18, 22 42 Q 22 78, 48 102" stroke="#1a3c8a" stroke-width="5" opacity="0.5" fill="none" stroke-linecap="round"/>
+      <path class="c-left" d="M 48 12 Q 14 12, 14 42 Q 14 78, 48 108" stroke="#1a3c8a" stroke-width="7" opacity="0.25" fill="none" stroke-linecap="round"/>
+      <path class="c-right" d="M 72 15 Q 102 15, 102 42 Q 102 78, 72 105" stroke="#1a3c8a" fill="none" stroke-width="3" stroke-linecap="round"/>
+      <path class="c-right" d="M 72 18 Q 98 18, 98 42 Q 98 78, 72 102" stroke="#1a3c8a" stroke-width="5" opacity="0.5" fill="none" stroke-linecap="round"/>
+      <path class="c-right" d="M 72 12 Q 106 12, 106 42 Q 106 78, 72 108" stroke="#1a3c8a" stroke-width="7" opacity="0.25" fill="none" stroke-linecap="round"/>
+      <text x="60" y="52" text-anchor="middle" font-family="'Alex Brush', cursive" fill="#1a3c8a" font-size="34" font-weight="bold" dy=".3em">A</text>
+      <text x="60" y="80" text-anchor="middle" font-family="'Alex Brush', cursive" fill="#1a3c8a" font-size="34" font-weight="bold" dy=".3em" transform="rotate(180 60 66)">A</text>
+    </svg>
+    <span class="logo-caption">ANAEMOIA</span>
+  </div>
+</div>
+
+<div class="scroll-spacer"></div>
+
+<footer class="footer">
+  <div class="cookie-text">
+    This website uses its own and third-party cookies necessary for its operation
+    and to analyze your browsing habits. Also, some cookies are related to
+    functionalities offered on the web. For more information, please access our
+    <a href="#">cookies policy</a>
+  </div>
+  <div class="footer-buttons">
+    <button id="settingsBtn">Settings</button>
+    <button id="cancelBtn">Cancel</button>
+    <button id="gotItBtn">Got it</button>
+  </div>
+</footer>
+
+<script>
+  (function() {
+    // ========== CONFIGURATION – IMAGES a.png to o.png ==========
+    const imageFolder = "images/";
+    const imageExt = ".png";
+    const letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"];
+    
+    // Build full image paths
+    const imageList = letters.map(letter => `${imageFolder}${letter}${imageExt}`);
+    
+    // Background boxes (first six images: a.png to f.png)
+    const bgBoxImages = imageList.slice(0, 6);
+    
+    // ========== 1. PROJECT GRID – exactly 15 cards (one per image) ==========
+    const projectsContainer = document.getElementById('projectsGrid');
+    const totalItems = 15;   // one card for each image a - o
+    
+    for (let i = 0; i < totalItems; i++) {
+      const projectDiv = document.createElement('div');
+      projectDiv.className = 'project';
+      const img = document.createElement('img');
+      img.src = imageList[i];
+      img.alt = `Nakshatra couture study ${i+1}`;
+      img.loading = 'lazy';
+      const span = document.createElement('span');
+      span.textContent = `${letters[i].toUpperCase()} ⸻ ${i+1}`;
+      projectDiv.appendChild(img);
+      projectDiv.appendChild(span);
+      projectsContainer.appendChild(projectDiv);
+    }
+    
+    // ========== 2. STATIC GLASS BACKGROUND BOXES ==========
+    const ring = document.getElementById('bgRing');
+    const boxCount = 6;
+    const positions = [
+      { left: '4%', top: '8%' }, { left: '78%', top: '6%' },
+      { left: '8%', top: '68%' }, { left: '75%', top: '64%' },
+      { left: '42%', top: '14%' }, { left: '44%', top: '70%' }
+    ];
+    
+    for (let i = 0; i < boxCount; i++) {
+      const box = document.createElement('div');
+      box.className = 'bg-box';
+      box.innerHTML = `<img src="${bgBoxImages[i]}" alt="ambient texture">`;
+      box.style.left = positions[i].left;
+      box.style.top = positions[i].top;
+      ring.appendChild(box);
+    }
+    
+    window.addEventListener('resize', () => {
+      const allBoxes = document.querySelectorAll('.bg-box');
+      allBoxes.forEach((box, idx) => {
+        if (idx < positions.length) {
+          box.style.left = positions[idx].left;
+          box.style.top = positions[idx].top;
+        }
+      });
+    });
+    
+    // ========== 3. CLICK HANDLERS ==========
+    const wordCollectionLink = document.getElementById('wordCollectionLink');
+    if (wordCollectionLink) {
+      wordCollectionLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+    
+    const nakshatraLink = document.getElementById('nakshatraNavLink');
+    const targetSection = document.getElementById('nakshatra-section');
+    if (nakshatraLink && targetSection) {
+      nakshatraLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+    
+    const brandStoreLink = document.getElementById('brandStoreLink');
+    if (brandStoreLink) {
+      brandStoreLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('✨ Brand Store — coming soon. Explore the celestial collection.');
+      });
+    }
+    
+    // ========== 4. COOKIE BUTTONS ==========
+    const settingsBtn = document.getElementById('settingsBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const gotItBtn = document.getElementById('gotItBtn');
+    
+    if (settingsBtn) {
+      settingsBtn.addEventListener('click', () => alert('⚙️ Cookie preferences: functional & analytics only.'));
+    }
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => {
+        const footer = document.querySelector('.footer');
+        if (footer) footer.style.opacity = '0.5';
+        setTimeout(() => {
+          alert('Preference cancelled. Cookies limited.');
+          if (footer) footer.style.opacity = '1';
+        }, 100);
+      });
+    }
+    if (gotItBtn) {
+      gotItBtn.addEventListener('click', () => {
+        const footer = document.querySelector('.footer');
+        footer.style.transition = '0.3s ease';
+        footer.style.transform = 'translateY(100%)';
+        setTimeout(() => {
+          footer.style.display = 'none';
+          document.body.style.paddingBottom = '40px';
+        }, 300);
+      });
+    }
+    
+    console.log(`Loaded ${totalItems} images from ${imageFolder} (a.png to o.png)`);
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Brand Store</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%232b2a6a'/%3E%3Cpath d='M35 30 L35 70 M35 30 L55 30 Q70 30 70 45 Q70 55 55 55 L35 55 M35 55 L58 55 Q70 55 70 70 L55 70' stroke='white' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round' /%3E%3C/svg%3E">
+  <style>
+    /* Import cursive font for the A's inside logo */
+    @import url('https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      /* Body text font: Yu Gothic UI */
+      font-family: 'Yu Gothic UI', 'Segoe UI', 'Inter', system-ui, sans-serif;
+    }
+
+    /* ========== HORIZONTAL LINEAR GRADIENT BACKGROUND ========== */
+    .gradient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: linear-gradient(90deg, #ffffff 0%, #2b5fe0 100%);
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .main-content {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    /* Logo container – zero border radius, background fits content */
+    .logo-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      background: transparent;
+      padding: 0.5rem 1rem;
+      border-radius: 0;        /* zero border radius */
+      backdrop-filter: none;
+    }
+
+    /* SVG logo */
+    .custom-logo {
+      width: 110px;
+      height: 110px;
+      display: block;
+    }
+
+    /* Logo text font: Crowk (with fallbacks) – now uppercase */
+    .logo-text {
+      font-family: 'Crowk', 'Playfair Display', 'Georgia', serif;
+      font-size: 2.4rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: #1a2a4f;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+      text-transform: uppercase;
+    }
+
+    /* ========== POETIC CONTENT (body text = Yu Gothic UI) ========== */
+    .poetry-container {
+      position: relative;
+      z-index: 10;
+      max-width: 780px;
+      margin: 2rem auto 4rem auto;
+      padding: 2rem;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+      border-radius: 32px;
+    }
+
+    .poetry-container p, .poetry-container .desc {
+      font-family: 'Yu Gothic UI', 'Segoe UI', sans-serif;
+      color: #f0f0f0;
+      line-height: 1.5;
+    }
+
+    .main-quote {
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: #fff5ea;
+      margin-bottom: 1.2rem;
+    }
+
+    .poetic-lines {
+      font-size: 1.2rem;
+      color: #e0cfc2;
+      border-left: 3px solid #ffaa88;
+      padding-left: 1rem;
+      margin: 1rem 0;
+      text-align: left;
+    }
+
+    .highlight-heading {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #ffeedd;
+      margin: 1rem 0;
+    }
+
+    .description {
+      font-size: 1rem;
+      color: #e0d6cf;
+      margin: 1rem 0;
+    }
+
+    .atmosphere {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: #f0e0d0;
+      border-top: 1px solid rgba(255,170,136,0.3);
+      padding-top: 1rem;
+      margin-top: 1rem;
+    }
+
+    /* ========== STICKY CENTER NAVBAR (menu font: Kugile) ========== */
+    .center-nav {
+      position: fixed;
+      top: 70%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 200;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 0.8rem 2rem;
+      white-space: nowrap;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+      border-radius: 80px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .center-nav a {
+      font-family: 'Kugile', 'Brush Script MT', cursive;
+      color: rgba(255, 255, 255, 0.95);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      text-shadow: 0 0 4px rgba(0,0,0,0.5);
+    }
+
+    .center-nav a:hover {
+      color: #ffaa88;
+    }
+
+    .center-nav a u {
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+    }
+
+    .center-nav a.active {
+      color: #ffaa88;
+    }
+
+    .center-nav a:last-child {
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+    }
+
+    /* ========== COOKIE FOOTER ========== */
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255, 80, 40, 0.3);
+      padding: 0.8rem 2rem;
+      z-index: 1000;
+      transition: transform 0.35s ease-in-out;
+      transform: translateY(0);
+      font-family: 'Yu Gothic UI', sans-serif;
+    }
+
+    .footer.hidden {
+      transform: translateY(100%);
+    }
+
+    .cookie-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .cookie-text {
+      font-size: 0.75rem;
+      color: #e0e0e0;
+      flex: 2;
+    }
+
+    .cookie-text a {
+      color: #ffaa88;
+      text-decoration: underline;
+    }
+
+    .footer-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .footer-buttons button {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 40px;
+      padding: 4px 16px;
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Yu Gothic UI', sans-serif;
+      transition: all 0.2s ease;
+    }
+
+    .footer-buttons button:last-child {
+      background: white;
+      color: black;
+      border: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      .custom-logo { width: 70px; height: 70px; }
+      .logo-text { font-size: 1.4rem; }
+      .logo-wrapper { gap: 0.5rem; }
+      .center-nav { gap: 1rem; padding: 0.5rem 1rem; top: 65%; }
+      .center-nav a { font-size: 0.8rem; }
+      .main-quote { font-size: 1.4rem; }
+    }
+    @media (max-width: 480px) {
+      .custom-logo { width: 55px; height: 55px; }
+      .logo-text { font-size: 1.1rem; }
+      .center-nav a { font-size: 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Horizontal linear gradient background (white to blue) -->
+<div class="gradient-bg"></div>
+
+<div class="main-content">
+  <!-- Logo + text (zero border radius) -->
+  <div class="logo-wrapper">
+    <!-- Custom SVG: two vertical C's facing each other, thickness increasing from center to ends, 
+         with two A's inside: one normal (cursive), one INVERTED (rotated 180°) -->
+    <svg class="custom-logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <style>
+          .c-left {
+            fill: none;
+            stroke: #1a2a4f;
+            stroke-linecap: round;
+          }
+          .c-right {
+            fill: none;
+            stroke: #1a2a4f;
+            stroke-linecap: round;
+          }
+          .a-cursive {
+            font-family: 'Alex Brush', cursive;
+            fill: #1a2a4f;
+            font-size: 34px;
+            font-weight: bold;
+          }
+          .a-inverted {
+            font-family: 'Alex Brush', cursive;
+            fill: #1a2a4f;
+            font-size: 34px;
+            font-weight: bold;
+            transform-origin: center;
+          }
+        </style>
+      </defs>
+      
+      <!-- LEFT C (vertical, opening right) – thickness increases toward ends -->
+      <path class="c-left" d="M 48 15 Q 18 15, 18 42 Q 18 78, 48 105" stroke-width="3" />
+      <path class="c-left" d="M 48 18 Q 22 18, 22 42 Q 22 78, 48 102" stroke-width="5" opacity="0.5" />
+      <path class="c-left" d="M 48 12 Q 14 12, 14 42 Q 14 78, 48 108" stroke-width="7" opacity="0.25" />
+      
+      <!-- RIGHT C (mirrored, opening left) -->
+      <path class="c-right" d="M 72 15 Q 102 15, 102 42 Q 102 78, 72 105" stroke-width="3" />
+      <path class="c-right" d="M 72 18 Q 98 18, 98 42 Q 98 78, 72 102" stroke-width="5" opacity="0.5" />
+      <path class="c-right" d="M 72 12 Q 106 12, 106 42 Q 106 78, 72 108" stroke-width="7" opacity="0.25" />
+      
+      <!-- Two A's inside: normal (cursive) & INVERTED (rotated 180°) -->
+      <text x="60" y="52" text-anchor="middle" class="a-cursive" dy=".3em">A</text>
+      <text x="60" y="80" text-anchor="middle" class="a-inverted" dy=".3em" transform="rotate(180 60 66)">A</text>
+    </svg>
+    <!-- Logo text: ANAEMOIA (all caps) using Crowk font -->
+    <span class="logo-text">ANAEMOIA</span>
+  </div>
+</div>
+
+<!-- Poetic content (body text = Yu Gothic UI) -->
+<div class="poetry-container">
+  <div class="main-quote">There are emotions too delicate to explain —<br>only felt.</div>
+  <div class="poetic-lines">
+    The quiet pull of something distant.<br>
+    The beauty of a moment that seems suspended in time.<br>
+    The longing for places, eras, and memories that never truly belonged to us.
+  </div>
+  <div class="highlight-heading">This is the world of Anemoia.</div>
+  <div class="description">
+    Named after the rare feeling of nostalgia for a time never lived, <strong>Anemoia</strong> was created as an ode to timeless femininity and emotional design. The brand blends couture craftsmanship with modern elegance, creating garments that feel less like fashion and more like fragments of a story waiting to be worn.
+  </div>
+  <div class="atmosphere">
+    More than couture, Anemoia is an atmosphere.<br>
+    A lingering feeling.<br>
+    A beautiful ache for something timeless.
+  </div>
+</div>
+
+<!-- CENTER NAVBAR (menu font: Kugile) -->
+<div class="center-nav">
+  <a href="a.html">Anaemoia™</a>
+  <a href="archive.html">Word collection</a>
+  <a href="info-contact.html" class="active"><u>Brand Store</u></a>
+  <a href="#">IG</a>
+  <a href="#">YT</a>
+  <a href="mailto:contactBrand_store.com">contact@Brand_Store.com</a>
+</div>
+
+<!-- COOKIE CONSENT FOOTER -->
+<footer class="footer" id="cookieFooter">
+  <div class="cookie-wrapper">
+    <div class="cookie-text">
+      This website uses its own and third-party cookies necessary for its operation
+      and to analyze your browsing habits. Also, some cookies are related to
+      functionalities offered on the web. For more information, please access our
+      <a href="#">cookies policy</a>.
+    </div>
+    <div class="footer-buttons">
+      <button id="cookieSettings">Settings</button>
+      <button id="cookieCancel">Cancel</button>
+      <button id="cookieAccept">Got it</button>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function() {
+    const footerEl = document.getElementById('cookieFooter');
+    const acceptBtn = document.getElementById('cookieAccept');
+    const cancelBtn = document.getElementById('cookieCancel');
+    const settingsBtn = document.getElementById('cookieSettings');
+
+    if (localStorage.getItem('anemoia_consent') === 'true') {
+      footerEl.classList.add('hidden');
+    }
+
+    function hideFooter() {
+      footerEl.classList.add('hidden');
+      localStorage.setItem('anemoia_consent', 'true');
+    }
+
+    if (acceptBtn) acceptBtn.addEventListener('click', hideFooter);
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => {
+        alert('You have declined optional cookies. Only essential cookies will be used.');
+        localStorage.setItem('anemoia_consent', 'false');
+        hideFooter();
+      });
+    }
+    if (settingsBtn) {
+      settingsBtn.addEventListener('click', () => {
+        alert('⚙️ Cookie preferences: functional & analytics cookies are active.');
+      });
+    }
+
+    // ensure logo wrapper has zero border radius
+    const wrapper = document.querySelector('.logo-wrapper');
+    if (wrapper) wrapper.style.borderRadius = '0px';
+  })();
+</script>
+</body>
+</html>
